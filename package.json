@@ -1,0 +1,22 @@
+{
+  "name": "job_portal_app_js",
+  "version": "1.0.0",
+  "description": "A job portal application (only backend api's)",
+  "main": "job_portal_app_js.js",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js",
+    "server": "nodemon app.js"
+  },
+  "author": "Sahil79",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "mongoose": "^8.7.0"
+  },
+  "devDependencies": {
+    "colors": "^1.4.0",
+    "nodemon": "^3.1.7"
+  }
+}
