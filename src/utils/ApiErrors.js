@@ -1,11 +1,11 @@
 // Creating a function to use Errors for the API
-class ApiErrors extends Error{
+import colors from 'colors';
+class ApiErrors{
     
     constructor(statusCode,message="Something Went Wrong",errors=[],stack=""){
-        super(message);
+        // super(message);
 
         this.statusCode = statusCode;
-        this.data = null;
         this.message = message;
         this.success = false;
         this.errors = errors;
@@ -15,6 +15,8 @@ class ApiErrors extends Error{
         }else{
             Error.captureStackTrace(this,this.constructor);
         }
+
+        console.log(`${statusCode} ${message}`.bgRed.white.bold);
     }
 }
 
