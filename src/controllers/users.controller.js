@@ -38,12 +38,55 @@ const userRegister = async (req,res)=>{
         }
         
         const token = user.createJWT();
-        console.log(token);
-        return res.status(200).json(new ApiResponse(201,user,`User created Succesfully!!`));
+
+        return res.status(200).json(
+            {
+                userData : new ApiResponse(201,user,`User created Succesfully!!`),
+                token
+
+            });
+
 
     }catch(err){
         new ApiErrors(400,"Error while user Registering User",err);
     }
 }
 
-export {userRegister};
+
+// Controller for user login
+
+const userLogin = async (req,res)=>{
+    try{
+        const {email,password} = req.body;
+
+        // Email and password validation
+        if(!email){
+            new ApiErrors(400,"Email is required",err);
+        }
+
+        if(!password){
+            new ApiErrors(400,"Password is required",err);
+        }
+
+        const user = await userModel.findOne({email}).select("+password");
+        if(!user){
+            throw new ApiErrors(400,"Invalid email or/and password");
+        }
+
+        const passMatched = await user.comparePassword(password);
+        if(!passMatched){
+            new ApiErrors(400,"Invalid email or/and password");
+        }
+
+        user.password = undefined;
+
+        const token = user.createJWT();
+        res.status(200).json({userData : new ApiResponse(202,user,"Login Successful"),token});
+
+
+    }catch(err){
+        new ApiErrors(400,"Error while user Login",err);
+    }
+    
+}
+export {userRegister,userLogin};

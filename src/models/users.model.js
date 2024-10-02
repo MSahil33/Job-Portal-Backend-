@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema({
     password:{
         type:String,
         required:[true,"Password is required"],
+        select:true
     },
     location:{
         type:String,
@@ -50,6 +51,12 @@ userSchema.methods.createJWT = function () {
       }
     );
 }
+
+// Function for comparing the passwords while user-logging
+userSchema.methods.comparePassword = async function(userPassword){
+    return await bcrypt.compare(this.password, userPassword);
+}
+
 
 const userModel = new mongoose.model("User",userSchema);
 

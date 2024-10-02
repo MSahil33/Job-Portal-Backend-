@@ -6,7 +6,7 @@ import colors from 'colors';
 
 // Files Imports
 import connectDB from "./src/config/db.config.js";
-import { userRegister } from "./src/controllers/users.controller.js";
+import userRouter from "./src/routes/users.routes.js";
 
 // App object
 const app = express()
@@ -25,7 +25,7 @@ app.use(cors()); //Using a middlware for cross-origin(Cors)
 const port = process.env.PORT || 8080
 
 // User Routes
-app.use("/api/v1/user",userRegister);
+app.use("/api/v1/user",userRouter);
 
 
 app.listen(port, () => {
