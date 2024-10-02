@@ -24,6 +24,7 @@ const userRegister = async (req,res)=>{
             return res.status(409).send(new ApiResponse(409,[],`User Already exist with the email ${email}`));
         }
 
+
         const user = await userModel.create({
             name,
             email: email.toLowerCase(),
@@ -31,14 +32,17 @@ const userRegister = async (req,res)=>{
             location
         });
 
+
         if(!user){
             new ApiErrors(500,"Something went wrong while registering user!!"); 
         }
-
-        return res.status(200).json(new ApiResponse(201,user,"User created Succesfully!!"));
+        
+        const token = user.createJWT();
+        console.log(token);
+        return res.status(200).json(new ApiResponse(201,user,`User created Succesfully!!`));
 
     }catch(err){
-        new ApiErrors(400,"Error while user Registering User");
+        new ApiErrors(400,"Error while user Registering User",err);
     }
 }
 

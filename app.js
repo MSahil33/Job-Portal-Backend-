@@ -2,6 +2,8 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from 'cors';
+import colors from 'colors';
+
 // Files Imports
 import connectDB from "./src/config/db.config.js";
 import { userRegister } from "./src/controllers/users.controller.js";
@@ -27,5 +29,5 @@ app.use("/api/v1/user",userRegister);
 
 
 app.listen(port, () => {
-  console.log(`App Running in "${process.env.DEV_MODE} Mode" on port : ${port}`);
+  console.log(`App Running in "${process.env.DEV_MODE} Mode" on port : ${port}`.bgCyan);
 })

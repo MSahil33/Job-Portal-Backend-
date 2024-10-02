@@ -16,7 +16,7 @@ class ApiErrors{
             Error.captureStackTrace(this,this.constructor);
         }
 
-        console.log(`${statusCode} ${message}`.bgRed.white.bold);
+        console.log(`${statusCode} ${message} ${errors}`.bgRed.white.bold);
     }
 }
 
