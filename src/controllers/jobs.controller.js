@@ -69,8 +69,57 @@ const getMyJobs = async (req, res) => {
 
 }
 
+// Controller to update the job
+const updateJob = async (req, res) => {
+
+    // Step-1 : 
+    // Getting the job-id from the url
+    const { id } = req.params;
+    // Getting the details to update  
+    const { company, jobTitle, jobDescription, workLocation, workMode, workType, salary } = req.body;
+
+    // Step-2 : Fetching the job-document from the database
+    const job = await jobModel.findById(id);
+
+    // Step-3 : Checking whether the job exists with that id or not
+    if (!job) {
+        throw new ApiErrors(404, "No Job available for this id");
+    }
+
+    // Step-4 : Updating the individual field by checking the data to be updated or not
+    if (company) {
+        job.company = company;
+    }
+    if (jobTitle) {
+        job.jobTitle = jobTitle;
+    }
+    if (jobDescription) {
+        job.jobDescription = jobDescription;
+    }
+    if (workLocation) {
+        job.workLocation = workLocation;
+    }
+    if (workMode) {
+        job.workMode = workMode;
+    }
+    if (workType) {
+        job.workType = workType;
+    }
+    if (salary) {
+        job.salary = salary;
+    }
+
+    // Step-5 : Saving the updated document in the database
+    await job.save();
+
+    // Step-6 : Returning the response
+    return res
+        .status(200)
+        .json(new ApiResponse(202, job, "User Details updated Successfully!!"));
+}
 
 export {
     postJob,
-    getMyJobs
+    getMyJobs,
+    updateJob
 }
