@@ -79,60 +79,94 @@ const updateJob = async (req, res) => {
     // Step-2 : Fetching the job-document from the database
     const job = await jobModel.findById(id);
 
-    // Step-3 : Before updating the job details checking whether the current logged user created the job or it is created by someone else.
+    // Step-3 : Checking whether the job exists with that id or not
+    if (!job) {
+        throw new ApiErrors(404, "No Job available for this id");
+    }
+    const currUserId = req.user?._id.toString();
+    const postedBy = job?.postedBy.toString();
+    // console.log(currUserId)
+    // console.log(postedBy)
+
+    // Step-4 : Before updating the job details checking whether the current logged user created the job or it is created by someone else.
     // Only allowing that user to update if the userId of the current user matches with the postedBy field of the job
-
-    const { currUserId } = req.user?._id;
-    const { postedBy } = job?.postedBy;
-
-    console.log(req.user._id);
-    console.log(job.postedBy)
-    if (currUserId === postedBy) {
-
-        // Step-4 : Checking whether the job exists with that id or not
-        if (!job) {
-            throw new ApiErrors(404, "No Job available for this id");
-        }
-
-        // Step-5 : Updating the individual field by checking the data to be updated or not
-        if (company) {
-            job.company = company;
-        }
-        if (jobTitle) {
-            job.jobTitle = jobTitle;
-        }
-        if (jobDescription) {
-            job.jobDescription = jobDescription;
-        }
-        if (workLocation) {
-            job.workLocation = workLocation;
-        }
-        if (workMode) {
-            job.workMode = workMode;
-        }
-        if (workType) {
-            job.workType = workType;
-        }
-        if (salary) {
-            job.salary = salary;
-        }
-
-        // Step-5 : Saving the updated document in the database
-        await job.save();
-
-        // Step-7 : Returning the response
-        return res
-            .status(200)
-            .json(new ApiResponse(202, job, "User Details updated Successfully!!"));
-    } else {
+    if (!(currUserId === postedBy)) {
         return res
             .status(409)
             .json(new ApiResponse(409, [], "You are not authorized to update this job"));
     }
+
+
+    // Step-5 : Updating the individual field by checking the data to be updated or not
+    if (company) {
+        job.company = company;
+    }
+    if (jobTitle) {
+        job.jobTitle = jobTitle;
+    }
+    if (jobDescription) {
+        job.jobDescription = jobDescription;
+    }
+    if (workLocation) {
+        job.workLocation = workLocation;
+    }
+    if (workMode) {
+        job.workMode = workMode;
+    }
+    if (workType) {
+        job.workType = workType;
+    }
+    if (salary) {
+        job.salary = salary;
+    }
+
+    // Step-5 : Saving the updated document in the database
+    await job.save();
+
+    // Step-7 : Returning the response
+    return res
+        .status(200)
+        .json(new ApiResponse(202, job, "User Details updated Successfully!!"));
+}
+
+
+// Controller to delete the job
+const deleteJob = async (req, res) => {
+
+    // Step-1 : Reading the job-id from the url
+    const { id } = req.params;
+
+    // Step-2: Fetching the job for the given id
+    const job = await jobModel.findById(id);
+
+    // Step-3: Checking whther the job exists for that id or not
+    if (!job) {
+        throw new ApiErrors(404, "No Job Exists for this id!!");
+    }
+
+    // Step-4 : Checking whether the current loggedin user is trying to delete the job if yes then we will allow them otherwise restrict the other user ,by comparing the postedBy id with the current user id
+    const currUserId = req.user?._id.toString();
+    const postedBy = job?.postedBy.toString();
+
+    if (currUserId !== postedBy) {
+        return res
+            .status(409)
+            .json(new ApiResponse(409, "You are not authorized to delete this job "));
+    }
+
+    // Step-5 : Deleting the job 
+    await jobModel.deleteOne({ _id: id });
+
+    // Step-6 : Returning the response
+
+    return res
+        .status(200)
+        .json(new ApiResponse(202, [], "Job Deleted Successfully"));
 }
 
 export {
     postJob,
     getMyJobs,
-    updateJob
+    updateJob,
+    deleteJob
 }
