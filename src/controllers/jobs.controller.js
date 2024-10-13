@@ -2,8 +2,6 @@ import jobModel from "../models/jobs.model.js";
 import { ApiErrors } from "../utils/ApiErrors.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
-
-
 // ---------Steps or Algorithms of postJob Controller
 // Step-1 : Getting the job details from the user
 // Step-2 : Validating the details (Whether it is provided or not)
@@ -81,41 +79,56 @@ const updateJob = async (req, res) => {
     // Step-2 : Fetching the job-document from the database
     const job = await jobModel.findById(id);
 
-    // Step-3 : Checking whether the job exists with that id or not
-    if (!job) {
-        throw new ApiErrors(404, "No Job available for this id");
-    }
+    // Step-3 : Before updating the job details checking whether the current logged user created the job or it is created by someone else.
+    // Only allowing that user to update if the userId of the current user matches with the postedBy field of the job
 
-    // Step-4 : Updating the individual field by checking the data to be updated or not
-    if (company) {
-        job.company = company;
-    }
-    if (jobTitle) {
-        job.jobTitle = jobTitle;
-    }
-    if (jobDescription) {
-        job.jobDescription = jobDescription;
-    }
-    if (workLocation) {
-        job.workLocation = workLocation;
-    }
-    if (workMode) {
-        job.workMode = workMode;
-    }
-    if (workType) {
-        job.workType = workType;
-    }
-    if (salary) {
-        job.salary = salary;
-    }
+    const { currUserId } = req.user?._id;
+    const { postedBy } = job?.postedBy;
 
-    // Step-5 : Saving the updated document in the database
-    await job.save();
+    console.log(req.user._id);
+    console.log(job.postedBy)
+    if (currUserId === postedBy) {
 
-    // Step-6 : Returning the response
-    return res
-        .status(200)
-        .json(new ApiResponse(202, job, "User Details updated Successfully!!"));
+        // Step-4 : Checking whether the job exists with that id or not
+        if (!job) {
+            throw new ApiErrors(404, "No Job available for this id");
+        }
+
+        // Step-5 : Updating the individual field by checking the data to be updated or not
+        if (company) {
+            job.company = company;
+        }
+        if (jobTitle) {
+            job.jobTitle = jobTitle;
+        }
+        if (jobDescription) {
+            job.jobDescription = jobDescription;
+        }
+        if (workLocation) {
+            job.workLocation = workLocation;
+        }
+        if (workMode) {
+            job.workMode = workMode;
+        }
+        if (workType) {
+            job.workType = workType;
+        }
+        if (salary) {
+            job.salary = salary;
+        }
+
+        // Step-5 : Saving the updated document in the database
+        await job.save();
+
+        // Step-7 : Returning the response
+        return res
+            .status(200)
+            .json(new ApiResponse(202, job, "User Details updated Successfully!!"));
+    } else {
+        return res
+            .status(409)
+            .json(new ApiResponse(409, [], "You are not authorized to update this job"));
+    }
 }
 
 export {
