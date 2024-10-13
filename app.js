@@ -7,6 +7,7 @@ import colors from 'colors';
 // Files Imports
 import connectDB from "./src/config/db.config.js";
 import userRouter from "./src/routes/users.routes.js";
+import jobRouter from "./src/routes/jobs.routes.js";
 
 // App object
 const app = express()
@@ -22,10 +23,13 @@ app.use(express.json()); // Using a middleware to use json data
 app.use(cors()); //Using a middlware for cross-origin(Cors) 
 
 // Getting port variable from the env file
-const port = process.env.PORT || 8080
+const port = process.env.PORT || 8080;
 
-// User Routes
-app.use("/api/v1/user",userRouter);
+// User Routes base uri
+app.use("/api/v1/user", userRouter);
+
+// Jobs Routes base uri
+app.use("/api/v1/jobs", jobRouter);
 
 
 app.listen(port, () => {
