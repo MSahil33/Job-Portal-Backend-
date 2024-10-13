@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 
-// Example job model documeny
+// Example job model document
 // {
 //     company:"Amazon",
 //     jobTitle:"Software Developer I",
@@ -20,15 +20,17 @@ const jobSchema = new mongoose.Schema({
     },
     jobTitle: {
         type: String,
-        required: [true, "Job Title is required"]
+        required: [true, "Job Title is required"],
+        maxLength: 200
     },
     jobDescription: {
         type: String,
-        required: [true, "Job Description is required"]
+        required: [true, "Job Description is required"],
+        minLength: 100
     },
     workLocation: {
         type: String,
-        required: [true, 'Work Location is required']
+        default: "Not Available"
     },
     workMode: {
         type: String,
@@ -40,9 +42,9 @@ const jobSchema = new mongoose.Schema({
         enum: ['Full-time', 'Part-time', 'Internship', 'Contract'],
         default: 'Full-time'
     },
-    Salary: {
+    salary: {
         type: String,
-        required: ['true', "Salary range is required"]
+        required: [true, "Salary range is required"]
     },
     postedBy: {
         type: mongoose.Types.ObjectId,

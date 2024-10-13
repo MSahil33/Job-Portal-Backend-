@@ -195,4 +195,11 @@ const userLogout = async (req, res) => {
         .json(new ApiResponse(200, {}, "User Logged out Successfully"))
 }
 
-export { userRegister, userLogin, getUserDetails, updateUserDetails, changeCurrentPassword, userLogout };
+export {
+    userRegister,
+    userLogin,
+    getUserDetails,
+    updateUserDetails,
+    changeCurrentPassword,
+    userLogout
+};
